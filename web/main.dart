@@ -11,67 +11,56 @@ List<num> oAngles;
 
 void main() {
   CanvasElement canvas = querySelector('#koch');
-  CanvasRenderingContext2D context = canvas.getContext('2d');
+  CanvasRenderingContext2D context = canvas.context2D;
   original  = new Shape.Original(canvas);
   original.start();
-  canvas.onContextMenu.listen((MouseEvent e) => e.preventDefault());
-  canvas.onMouseDown.listen(increaseDepth);
-  canvas.onKeyDown.listen(startOver);
-}
-void setColor(CanvasElement canvas, String color) {
-  CanvasRenderingContext2D context = canvas.getContext('2d');
-  context.fillStyle = color;
-  context.fillRect(0, 0, canvas.width, canvas.height);
+//  canvas.onContextMenu.listen((MouseEvent e) => e.preventDefault());
+  var fracButton = querySelector("#depth");
+  fracButton.onClick.listen(increaseDepth);
+  querySelector("#clear").onClick.listen(startOver);
 }
 void findAngles(Shape original) {
   oAngles = <num>[];
+  num x = original.points.first.x - original.points.last.x;
+  num y = original.points.first.y - original.points.last.y;
+  num oAngle = 2*atan((sqrt(pow(x,2) + pow(y,2)) - x)/y);
   for(int i=0; i<original.size()-1; ++i) {
-    num x = original.points[i].x - original.points[i+1].x;
-    num y = original.points[i].y - original.points[i+1].y;
+    x = original.points[i].x - original.points[i+1].x;
+    y = original.points[i].y - original.points[i+1].y;
     num sideAngle = 2*atan((sqrt(pow(x,2) + pow(y,2)) - x)/y);
-    
-    x = original.points.first.x - original.points.last.x;
-    y = original.points.first.y - original.points.last.y;
-    num oAngle = 2*atan((sqrt(pow(x,2) + pow(y,2)) - x)/y);
-   
     oAngles.add((oAngle - sideAngle)*-1);
   }
 }
-void startOver(KeyboardEvent key) {
-  print('here');
-  print(key);
-}
-void increaseDepth(MouseEvent event) {
-  if (event.button != 2) return;
+void increaseDepth(event) {
   if (original.size() < 2) return;
   original.startFractal();
-//  print("oAngle: $oAngle");
+  //increases the level the the fractal renders to
   maxDepth ++;
-//  print(original.getAngle());
-//  original.size();
-  CanvasElement canvas = querySelector('#koch');
-  var context = canvas.context2D;
+  var context = querySelector('#koch').context2D;
   original.drawBackground(context);
   findAngles(original);
+  //actual recursive fractal program
   fractalize(original, 0);
-  print('done');
+//  print('done, $maxDepth levels');
 }
 void fractalize(Shape current, int depth) {
-  CanvasElement canvas = querySelector("#koch");
   if (depth == maxDepth) {
-    //    original.drawBackground(context);
     current.render();
     return;
   }
   var levelAbove = current.getBaseDistance();
   for (int i=0; i<current.size() - 1; ++i) {
-//    Shape newDepth = new Shape.Copy(current, canvas);
-    Shape newDepth = new Shape.Copy(current, canvas);
+    Shape newDepth = new Shape.Copy(current);
     newDepth.translate(i);
-//    print(current.points);
     newDepth.rotate(i, oAngles[i]);
     newDepth.dialate(i, levelAbove);
     fractalize(newDepth, depth + 1);
-//    print('going');
   }
+}
+void startOver(event) {
+  var canvas = querySelector("#koch");
+  original = null;
+  original = new Shape.Original(canvas);
+  maxDepth = 0;
+  original.start();
 }
