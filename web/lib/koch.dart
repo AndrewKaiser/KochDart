@@ -46,8 +46,8 @@ class Shape {
   render([CanvasRenderingContext2D context]) {
     if (points.isEmpty) return;
     var context = canvas.context2D;
-    context..lineWidth = 0.5
-           ..strokeStyle = 'black';
+    context..lineWidth = 1
+           ..strokeStyle = 'white';
     context..beginPath()
            ..moveTo(points.first.x, points.first.y);
     for (int i=1; i<this.size(); ++i) {
@@ -120,7 +120,7 @@ class Shape {
   }
   void drawBackground(CanvasRenderingContext2D context) {
     //resets the background at each level (clearRect may be faster if optimizing)
-    context.fillStyle = 'white';
+    context.fillStyle = 'black';
     context.fillRect(0, 0, width, height);
 //    context.clearRect(0, 0, width, height);
   }
@@ -128,8 +128,8 @@ class Shape {
     // initial shape creation according to mouse input
     var rect = canvas.getBoundingClientRect();
     if (points.isEmpty) return;
-    context..lineWidth = 0.5
-           ..strokeStyle = 'black';
+    context..lineWidth = 1
+           ..strokeStyle = 'white';
 
     if (this.size() >= 2) {
       context..beginPath()
