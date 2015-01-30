@@ -34,7 +34,7 @@ class Shape {
     height = canvas.height;
     mouse = new Mouse(canvas);
     useMouse = true;
-    onMouseDown = canvas.onMouseDown.listen(addPoint);
+    onMouseDown = window.onMouseDown.listen(addPoint);
     requestRedraw();
   }
   startFractal() {
@@ -65,12 +65,11 @@ class Shape {
   double getBaseDistance() {
     return sqrt(pow(points.first.x-points.last.x,2) + pow(points.first.y-points.last.y,2));
   }
-  Point getPoint(int i) {
-    return points[i];
-  }
   void addPoint(MouseEvent event) {
+    var rect = canvas.getBoundingClientRect();
     if (event.button == 2) return;
-    points.add(new Point(event.client.x, event.client.y));
+    if (!mouse.on) return;
+    points.add(new Point(event.client.x - rect.left, event.client.y - rect.top ));
   }
   void translate(int i) {
     // shifts all the points with the previous level as the origin
@@ -127,6 +126,7 @@ class Shape {
   }
   void drawLine(CanvasRenderingContext2D context) {
     // initial shape creation according to mouse input
+    var rect = canvas.getBoundingClientRect();
     if (points.isEmpty) return;
     context..lineWidth = 0.5
            ..strokeStyle = 'black';
@@ -142,7 +142,7 @@ class Shape {
 
     context..beginPath()
            ..moveTo(points.last.x, points.last.y)
-           ..lineTo(mouse.x, mouse.y)
+           ..lineTo(mouse.x - rect.left, mouse.y - rect.top)
            ..stroke();
   }
   void requestRedraw() {

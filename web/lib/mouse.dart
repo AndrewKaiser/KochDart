@@ -3,23 +3,20 @@ import 'koch.dart';
 
 class Mouse {
   CanvasElement canvas;
-  int x = 0;
-  int y = 0;
-  bool down = false;
+  var x = 0;
+  var y = 0;
+  bool on = false;
   
-  Mouse(CanvasElement c) {
-    canvas = c;
-    
-    canvas.onMouseMove.listen(changePos);
-    canvas.onMouseDown.listen(buttonPos);
-    canvas.onMouseUp.listen(buttonPos);
+  Mouse(this.canvas) {
+    window.onMouseMove.listen(changePos);
+    canvas.onMouseOver.listen(isOn);
+    canvas.onMouseLeave.listen(isOff);
   }
-  bool isDown() {
-    return down;
+  void isOn(MouseEvent event) {
+    on = true;
   }
-  void buttonPos(MouseEvent event) {
-    if (down) down = false;
-    else down = true;
+  void isOff(MouseEvent event) {
+    on = false;
   }
   void changePos(MouseEvent event) {
     x = event.client.x;

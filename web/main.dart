@@ -36,7 +36,8 @@ void increaseDepth(event) {
   original.startFractal();
   //increases the level the the fractal renders to
   maxDepth ++;
-  var context = querySelector('#koch').context2D;
+  var canvas = querySelector('#koch');
+  var context = canvas.context2D;
   original.drawBackground(context);
   findAngles(original);
   //actual recursive fractal program
